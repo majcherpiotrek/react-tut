@@ -1,0 +1,22 @@
+.board {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    min-width: 20%;
+    flex: 1;
+}
+
+.board-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    min-width: 100%;
+    min-height: 100%;
+    flex: 1;
+}
+
+.board-row:after {
+    clear: both;
+    content: "";
+    display: table;
+}
