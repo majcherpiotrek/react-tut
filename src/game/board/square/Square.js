@@ -2,8 +2,12 @@ import React from 'react';
 import './Square.css';
 
 function Square(props) {
+  const className = 'square'  
+                    + (props.isSelected ? ' selected' : '') 
+                    + (props.winningSquare ? ' winning' : '')
+                    + (props.gameOverDraw ? ' draw' : '');
   return (
-    <button className={'square'  + (props.isSelected ? ' selected' : '')} onClick={props.onClick}>
+    <button className={className} onClick={props.onClick}>
       {props.value}
     </button>
   );

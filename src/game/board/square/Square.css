@@ -20,3 +20,11 @@
 .square.selected {
     background-color: red;
 }
+
+.square.winning {
+    background-color: yellow;
+}
+
+.square.draw {
+    background-color: gray;
+}

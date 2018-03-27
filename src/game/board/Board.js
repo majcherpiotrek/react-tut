@@ -8,11 +8,14 @@ class Board extends React.Component {
     const row = Math.floor(i / 3);
     const lastMove = this.props.lastMove;
     const isCurrentlySelected = col === lastMove.col && row === lastMove.row;
+    const isWinningSquare = this.props.winningLine && this.props.winningLine.includes(i)
     return (
       <Square 
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
-        isSelected={isCurrentlySelected}
+        isSelected={!isWinningSquare && isCurrentlySelected}
+        winningSquare={isWinningSquare}
+        gameOverDraw={this.props.gameOverDraw}
       />
     );
   }

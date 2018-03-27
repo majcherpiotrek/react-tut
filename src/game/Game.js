@@ -3,6 +3,7 @@ import Board from './board/Board'
 import './Game.css'
 
 class Game extends React.Component {
+  
   constructor(props) {
     super(props);
     this.state = {
@@ -13,6 +14,7 @@ class Game extends React.Component {
       xIsNext: true,
       stepNumber: 0
     };
+    this.HISTORY_MAX_LENGTH = 10;
   }
 
   handleClick(i) {
@@ -39,12 +41,9 @@ class Game extends React.Component {
   jumpTo(step) {
     const history = this.state.history;
     this.setState({
-      history: step ? history.slice(step) : [{
-        squares: Array(9).fill(null),
-        move: {col: null, row: null}
-      }],
+      history: history.slice(0, step+1),
       stepNumber: step,
-      xIsNext: !step ? !step : (step % 2) !== 0
+      xIsNext: step%2 === 0
     });
   }
 
@@ -62,7 +61,7 @@ class Game extends React.Component {
     for (let i = 0; i < lines.length; i++) {
       const [a, b, c] = lines[i];
       if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-        return squares[a];
+        return {player: squares[a], line: lines[i]};
       }
     }
     return null;
@@ -74,17 +73,22 @@ class Game extends React.Component {
     const winner = this.calculateWinner(current.squares);
     
     const moves = history.map((step, move) => {
-      const desc = move ?
-        'Back to move #' + move + ` (${step.move.col}, ${step.move.row})` :
-        'Reset game';
-      return (
-        <button key={move} className="time-travel" onClick={() => this.jumpTo(move)}>{desc}</button>
-      );
+      if (move < history.length - 1) {
+        const desc = move ?
+          'Back to move #' + move + ` (${step.move.col}, ${step.move.row})` :
+          'Reset game';
+        return (
+          <button key={move} className="time-travel" onClick={() => this.jumpTo(move)}>{desc}</button>
+        );
+      } else return null;
     });
 
+    const gamOverDraw = history.length >= this.HISTORY_MAX_LENGTH;
     let status;
     if (winner) {
-      status = 'Winner: ' + winner;
+      status = 'Winner: ' + winner.player;
+    } else if (gamOverDraw) {
+      status = 'Game over - draw ;<';
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
@@ -94,6 +98,8 @@ class Game extends React.Component {
         <h1>{status}</h1>
         <div className="game-board">
           <Board
+            winningLine={winner && winner.line}
+            gameOverDraw={gamOverDraw}
             squares={current.squares}
             lastMove={current.move}
             onClick={(i) => this.handleClick(i)}
